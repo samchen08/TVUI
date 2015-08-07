@@ -13,14 +13,23 @@
     //组合键计算时间
         _comKeyTime = 2000,
 
-        //document对象
+    //document对象
         _doc = window.document,
 
     //事件句柄缓存对象,所有绑定的事件都保存在这里，格式：[{type: type, handler: handler, scope: scope}]
         _handlers = {},
 
-        //键值字典
+    //键值字典
         _key = TVUI.Key,
+
+        _eventMap = {
+            'load': window,
+            'unload': window,
+            'beforeunload': window,
+            'keyup': _doc,
+            'keydown': _doc,
+            'keypress': _doc
+        },
 
         /**
          * dom事件绑定函数
@@ -31,7 +40,7 @@
          */
         addEvent = function (type, handler, scope) {
             _handlers[++TVUI.uuid] = {type: type, handler: handler, scope: scope};
-            _doc.addEventListener(type, handler, false);
+            (_eventMap[type] || _doc).addEventListener(type, handler, false);
             return TVUI.uuid;
         },
 
@@ -192,7 +201,7 @@
          * @returns {TVUI.uuid|*} 事件唯一标识
          */
         onPress: function (callback, scope) {
-            return this.on('keydown', callback, scope);
+            return this.on('keyup', callback, scope);
         },
         /**
          * 按键事件，这种绑定方式支持长按连续触发
@@ -327,7 +336,7 @@
          * @returns {TVUI.uuid|*} 事件唯一标识
          */
         onNumber: function (callback, scope) {
-            return this.on('keydown', function (e) {
+            return this.on('keyup', function (e) {
                 if (e.which >= _key.NUM0 && e.which <= _key.NUM9) {
                     e.number = parseInt(e.which - _key.NUM0, 10);
                     callback && callback.call(scope, e);

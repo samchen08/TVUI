@@ -13,10 +13,7 @@ var TVUI = (function () {
     };
 })();
 
-//阻止按键默认行为
-document.onkeyup = document.onkeydown = document.onkeypress = function(){
-    return false;
-};
+
 
 //支持CMD方式加载
 if (typeof define !== 'undefined') {

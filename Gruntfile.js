@@ -46,7 +46,8 @@ module.exports = function (grunt) {
                         'src/event.js',
                         'src/class.js',
                         'src/base.js',
-                        'src/api.js']
+                        'src/api.js',
+                        'src/page.js']
                 }
             }
         }

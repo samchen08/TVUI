@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="UTF-8">
+    <title>page</title>
+</head>
+<body>
+<div id="msg"></div>
+<script src="../../build/tvui.js"></script>
+</body>
+</html>
+<script>
+
+    var id = TVUI.Util.getParam('id') || 1;
+
+    $('#msg').html('page:' + id);
+
+    if (id == 1) {
+        TVUI.Page.clearHistory();
+    }
+
+    var page = new TVUI.Page({
+        name: 'page_' + id,
+        home: id == 1 || id == 5,
+        level: parseInt(id),
+        backUrl: 'index.html',
+        unload: function (page, type) {
+            // alert('unload');
+            setTimeout(function () {
+                // page[type]();
+            }, 2000);
+            return true;
+        }
+    });
+
+
+
+    $('#msg').html('id:' + page.getCache().id);
+
+    page.on('unload', function () {
+        // alert('unload event');
+    });
+
+
+    TVUI.Event.onKey(TVUI.Key.HOMEPAGE, function () {
+        // alert('home key');
+    });
+
+    TVUI.Event.onNumber(function (e) {
+
+        page.go('page.html?id=' + e.number);
+
+    });
+
+</script>

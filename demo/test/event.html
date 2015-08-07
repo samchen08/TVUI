@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="UTF-8">
+    <title>TVUI.Event</title>
+
+</head>
+<body>
+<div id="msg"></div>
+<script src="../../build/tvui.js"></script>
+<script>
+    var $msg = $('#msg'),
+            _log = function () {
+                var args = Array.prototype.slice.call(arguments);
+                $msg.append($('<p>' + args.join(',') + '</p>'));
+                window.console && window.console.log(args.join(','));
+            };
+    TVUI.Event.onNumber(function (e) {
+        _log('onNumber', e.number);
+    });
+
+    TVUI.Event.onPress(function (e) {
+        _log('onPress', e.which);
+    });
+
+    TVUI.Event.onKey(TVUI.Key.NUM1, function(){
+        _log('onKey', TVUI.Key.NUM1);
+    });
+
+
+</script>
+</body>
+</html>
