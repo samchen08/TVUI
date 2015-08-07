@@ -24,7 +24,8 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    'build/tvui.min.js': ['build/tvui.js']
+                    'build/tvui.min.js': ['build/tvui.js'],
+                    'build/tvui.core.min.js': ['build/tvui.core.js']
                 }
             }
 
@@ -38,6 +39,28 @@ module.exports = function (grunt) {
                 },
                 files: {
                     'build/tvui.js': ['src/tvui.js',
+                        'src/json.js',
+                        'src/zepto.js',
+                        'src/ajax.js',
+                        'src/mustache.js',
+                        'src/util.js',
+                        'src/key.js',
+                        'src/lang.js',
+                        'src/event.js',
+                        'src/class.js',
+                        'src/base.js',
+                        'src/api.js',
+                        'src/page.js',
+                        'src/panel.js',
+                        'src/pager.js',
+                        'src/scrollbar.js',
+                        'src/dialog.js',
+                        'src/player.js',
+                        'src/lazyload.js',
+                        'src/widget.js',
+                        'src/channel.js',
+                        'src/log.js'],
+                    'build/tvui.core.js': ['src/tvui.js',
                         'src/json.js',
                         'src/zepto.js',
                         'src/ajax.js',
