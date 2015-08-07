@@ -8,9 +8,8 @@
 (function (root, factory) {
     var mustache = {};
     factory(mustache);
-    root.Mustache = mustache;
-    /*
-     if (typeof exports === "object" && exports) {
+    root.View = mustache;
+    /*    if (typeof exports === "object" && exports) {
      factory(exports); // CommonJS
      } else {
      var mustache = {};
@@ -20,9 +19,8 @@
      } else {
      root.Mustache = mustache; // <script>
      }
-     }
-     */
-}(this, function (mustache) {
+     }*/
+}(TVUI, function (mustache) {
 
     var whiteRe = /\s*/;
     var spaceRe = /\s+/;
@@ -345,7 +343,7 @@
      * maintaining a reference to the parent context.
      */
     function Context(view, parentContext) {
-        this.view = view === null ? {} : view;
+        this.view = view == null ? {} : view;
         this.cache = { '.': this.view };
         this.parent = parentContext;
     }
@@ -374,14 +372,14 @@
                     value = context.view;
 
                     var names = name.split('.'), i = 0;
-                    while (value !== null && i < names.length) {
+                    while (value != null && i < names.length) {
                         value = value[names[i++]];
                     }
                 } else {
                     value = context.view[name];
                 }
 
-                if (value !== null) break;
+                if (value != null) break;
 
                 context = context.parent;
             }
@@ -420,7 +418,7 @@
         var cache = this.cache;
         var tokens = cache[template];
 
-        if (tokens === null) {
+        if (tokens == null) {
             tokens = cache[template] = parseTemplate(template, tags);
         }
 
@@ -485,7 +483,7 @@
                         // Extract the portion of the original template that the section contains.
                         value = value.call(context.view, originalTemplate.slice(token[3], token[5]), subRender);
 
-                        if (value !== null) buffer += value;
+                        if (value != null) buffer += value;
                     } else {
                         buffer += this.renderTokens(token[4], context, partials, originalTemplate);
                     }
@@ -504,15 +502,15 @@
                 case '>':
                     if (!partials) continue;
                     value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
-                    if (value !== null) buffer += this.renderTokens(this.parse(value), context, partials, value);
+                    if (value != null) buffer += this.renderTokens(this.parse(value), context, partials, value);
                     break;
                 case '&':
                     value = context.lookup(token[1]);
-                    if (value !== null) buffer += value;
+                    if (value != null) buffer += value;
                     break;
                 case 'name':
                     value = context.lookup(token[1]);
-                    if (value !== null) buffer += mustache.escape(value);
+                    if (value != null) buffer += mustache.escape(value);
                     break;
                 case 'text':
                     buffer += token[1];

@@ -81,7 +81,7 @@
 
         var abortTimeout,
             dataType = settings.dataType,
-            hasPlaceholder = /\?.+=\?/.test(settings.url),
+          //  hasPlaceholder = /\?.+=\?/.test(settings.url),
             mime = accepts[dataType],
             headers = { },
             setHeader = function (name, value) {

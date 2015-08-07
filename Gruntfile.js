@@ -7,7 +7,9 @@ module.exports = function (grunt) {
                 "laxcomma": true,
                 evil: true,
                 expr: true,
-                loopfunc: true
+                loopfunc: true,
+               // unused:true,
+                eqnull:true
             },
             tvui: ['src/**/*.js']
 
@@ -47,7 +49,14 @@ module.exports = function (grunt) {
                         'src/class.js',
                         'src/base.js',
                         'src/api.js',
-                        'src/page.js']
+                        'src/page.js',
+                        'src/panel.js',
+                        'src/pager.js',
+                        'src/scrollbar.js',
+                        'src/dialog.js',
+                        'src/player.js',
+                        'src/lazyload.js',
+                        'src/log.js']
                 }
             }
         }

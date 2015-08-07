@@ -4,8 +4,7 @@
 (function (TVUI, JSON) {
     var util = TVUI.Util,
         key = TVUI.Key,
-        $ = TVUI.$,
-        Event = TVUI.Event;
+        $ = TVUI.$;
 
     var empty = function () {
         },

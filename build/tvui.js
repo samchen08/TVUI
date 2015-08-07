@@ -34,7 +34,7 @@ if (!this.JSON) {
     }
 
     if (typeof Date.prototype.toJSON !== 'function') {
-        Date.prototype.toJSON = function (key) {
+        Date.prototype.toJSON = function () {
             return this.getUTCFullYear() + '-' +
                 f(this.getUTCMonth() + 1) + '-' +
                 f(this.getUTCDate()) + 'T' +
@@ -1314,7 +1314,7 @@ window.TVUI && (window.TVUI.$ = Zepto);
 
         var abortTimeout,
             dataType = settings.dataType,
-            hasPlaceholder = /\?.+=\?/.test(settings.url),
+          //  hasPlaceholder = /\?.+=\?/.test(settings.url),
             mime = accepts[dataType],
             headers = { },
             setHeader = function (name, value) {
@@ -1480,9 +1480,8 @@ window.TVUI && (window.TVUI.$ = Zepto);
 (function (root, factory) {
     var mustache = {};
     factory(mustache);
-    root.Mustache = mustache;
-    /*
-     if (typeof exports === "object" && exports) {
+    root.View = mustache;
+    /*    if (typeof exports === "object" && exports) {
      factory(exports); // CommonJS
      } else {
      var mustache = {};
@@ -1492,9 +1491,8 @@ window.TVUI && (window.TVUI.$ = Zepto);
      } else {
      root.Mustache = mustache; // <script>
      }
-     }
-     */
-}(this, function (mustache) {
+     }*/
+}(TVUI, function (mustache) {
 
     var whiteRe = /\s*/;
     var spaceRe = /\s+/;
@@ -1817,7 +1815,7 @@ window.TVUI && (window.TVUI.$ = Zepto);
      * maintaining a reference to the parent context.
      */
     function Context(view, parentContext) {
-        this.view = view === null ? {} : view;
+        this.view = view == null ? {} : view;
         this.cache = { '.': this.view };
         this.parent = parentContext;
     }
@@ -1846,14 +1844,14 @@ window.TVUI && (window.TVUI.$ = Zepto);
                     value = context.view;
 
                     var names = name.split('.'), i = 0;
-                    while (value !== null && i < names.length) {
+                    while (value != null && i < names.length) {
                         value = value[names[i++]];
                     }
                 } else {
                     value = context.view[name];
                 }
 
-                if (value !== null) break;
+                if (value != null) break;
 
                 context = context.parent;
             }
@@ -1892,7 +1890,7 @@ window.TVUI && (window.TVUI.$ = Zepto);
         var cache = this.cache;
         var tokens = cache[template];
 
-        if (tokens === null) {
+        if (tokens == null) {
             tokens = cache[template] = parseTemplate(template, tags);
         }
 
@@ -1957,7 +1955,7 @@ window.TVUI && (window.TVUI.$ = Zepto);
                         // Extract the portion of the original template that the section contains.
                         value = value.call(context.view, originalTemplate.slice(token[3], token[5]), subRender);
 
-                        if (value !== null) buffer += value;
+                        if (value != null) buffer += value;
                     } else {
                         buffer += this.renderTokens(token[4], context, partials, originalTemplate);
                     }
@@ -1976,15 +1974,15 @@ window.TVUI && (window.TVUI.$ = Zepto);
                 case '>':
                     if (!partials) continue;
                     value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
-                    if (value !== null) buffer += this.renderTokens(this.parse(value), context, partials, value);
+                    if (value != null) buffer += this.renderTokens(this.parse(value), context, partials, value);
                     break;
                 case '&':
                     value = context.lookup(token[1]);
-                    if (value !== null) buffer += value;
+                    if (value != null) buffer += value;
                     break;
                 case 'name':
                     value = context.lookup(token[1]);
-                    if (value !== null) buffer += mustache.escape(value);
+                    if (value != null) buffer += mustache.escape(value);
                     break;
                 case 'text':
                     buffer += token[1];
@@ -2621,9 +2619,34 @@ TVUI.Lang = {
         T_3 : '关闭',
         T_4 : '退出',
         T_5 : '播放',
-        T_6 : '续播'
+        T_6 : '续播',
+        T_7:'锁频失败',
+        T_8:'无法在当前频点找到节目描述信息,请联系客服96956.',
+        T_9:'不可用媒资',
+        T_10:'网络繁忙，请稍候!',
+        T_11:'无权限操作',
+        T_12:'推流会话中断,请联系客服电话96956,错误码:C1-10909-',
+        T_13:'点播失败,是否重新点播?',
+        T_14:'点播会话中断,请联系客服电话96956,错误码:S1-10904-',
+        T_15:'提示'
     },
-    en: {}
+    en: {
+        T_1 : 'OK',
+        T_2 : 'Cancel',
+        T_3 : 'Close',
+        T_4 : 'Exit',
+        T_5 : 'Play',
+        T_6 : 'Resume',
+        T_7:'Locking frequency failed',
+        T_8:'Program information in not found , pls call 96956.',
+        T_9:'Not available media resources!',
+        T_10:'The network is busy, pls wait!',
+        T_11:'No permission to operate.',
+        T_12:'Flow session is interrupted,pls call 96956, error code:C1-10909-',
+        T_13:'On demand failed, whether to replay or not?',
+        T_14:'On demand session is interrupted,pls call 96956,error code:S1-10904-',
+        T_15:'Prompt'
+    }
 };
 
 //提供方法给外部继承
@@ -3380,8 +3403,7 @@ TVUI.Lang.extend = function (lang) {
 (function (TVUI, JSON) {
     var util = TVUI.Util,
         key = TVUI.Key,
-        $ = TVUI.$,
-        Event = TVUI.Event;
+        $ = TVUI.$;
 
     var empty = function () {
         },
@@ -3958,6 +3980,9 @@ TVUI.Lang.extend = function (lang) {
 })(TVUI, JSON);;
 /**
  * 页面模块
+ *  v1.2.0 更新
+ *  1、删除enableBack参数，代替功能使用 unload回调处理
+ *  2。增加历史记录操作几个静态方法
  */
 (function (TVUI, $) {
 
@@ -3997,6 +4022,7 @@ TVUI.Lang.extend = function (lang) {
                 //页面层级，如果大于0，即启用按层级别记录浏览历史
                 level: 0,
 
+                //在无历史记录时的后退地址
                 backUrl: null,
 
                 //页面返回、退出时，return  false 时不执行返回、退出
@@ -4394,4 +4420,2054 @@ TVUI.Lang.extend = function (lang) {
 
     TVUI.Page = Page;
 
-})(TVUI, Zepto);
+})(TVUI, Zepto);;
+/**
+ *  面板模块，提供菜单功能
+ *  v1.2.0 更新
+ *  1、增加 leaveLeft, leaveRight, leaveUp, leaveDown 4个事件
+ *
+ */
+(function (TVUI) {
+    var Panel,
+        $ = TVUI.$,
+        Class = TVUI.Class,
+        Event = TVUI.Event,
+        Util = TVUI.Util,
+        Base = TVUI.Base;
+
+    /**
+     * 面板类，继承Base
+     * @type {*}
+     */
+    Panel = Class.create({
+        init: function (options) {
+            var o = this.options = $.extend({
+                active: true,
+                //初始激活状态
+
+                cols: 0,
+                //列数
+
+                data: [],
+                //菜单数组或dom集合
+
+                disabled: [],
+                //禁用单元格索引，从0开始计算，例如要禁用第一个和第三个，设置 disabled :[0,2]
+
+                focusIndex: 0,
+                //初始焦点位置索引，从0开始计算
+
+                focusClass: 'focus',
+                //焦点样式className
+
+                selectClass: 'select',
+                //确定后的菜单样式className
+
+                leaveClass: 'leave',
+                //离开panel的菜单className
+
+                loop: false,
+                //是否循环
+
+                pager: null,
+                //Pager实例
+
+                textSelector: null,
+                //截取文字所在位置的选择器
+
+                textChar: -1,
+                //截取多少个字符，一个中文按2个字符计算，-1表示不截取
+
+                textAttrName: 'data-text'
+                //截取文字属性名称
+
+            }, options || {});
+            /**
+             * 激活状态
+             */
+            this._active = o.active;
+            /**
+             * 数据
+             */
+            this.data = o.data;
+            /**
+             * 禁用单元格
+             */
+            this.disabled = o.disabled;
+            /**
+             * 当前焦点所在索引
+             */
+            this.focusIndex = o.focusIndex;
+            /**
+             * 列数
+             */
+            this.cols = o.cols;
+            /**
+             * 行数
+             * @type {number}
+             */
+            this.rows = Math.ceil(this.data.length / this.cols);
+            /**
+             * 是否循环
+             */
+            this.loop = o.loop;
+            /**
+             * Pager实例
+             */
+            this.pager = o.pager;
+            this.setEmptyCell();
+            this.events();
+            if (this.pager) {
+                this.pager._active = this._active;
+            }
+            setTimeout(this.proxy(function () {
+                this._active && this.focus(this.focusIndex);
+            }), 0);
+
+        },
+        /**
+         * 重置Panel
+         * @param data 数据
+         * @param focusIndex 焦点索引,可选
+         * @param cols 列数，可选
+         */
+        reset: function (data, focusIndex, cols) {
+            this.data = data;
+            this.cols = cols || this.cols;
+            this.focusIndex = focusIndex || 0;
+            this.rows = Math.ceil(this.data.length / this.cols);
+            this.disabled = [];
+            this.setEmptyCell();
+            this.fire('reset', data, focusIndex, cols);
+        },
+        /**
+         * 设置没数据的单元格
+         */
+        setEmptyCell: function () {
+            var cellCount = this.rows * this.cols;
+            for (var i = this.data.length; i < cellCount; i++) {
+                this.disable(i);
+            }
+        },
+        /**
+         * 索引转换成单元格
+         * @param index
+         * @returns {*[]}
+         */
+        indexToCell: function (index) {
+            var r = parseInt(index / this.cols),
+                c = index % this.cols;
+            return [r, c];
+        },
+        /**
+         * 单元格转换成索引
+         * @param cell
+         * @returns {*}
+         */
+        cellToIndex: function (cell) {
+            return cell[0] * this.cols + cell[1];
+        },
+        /**
+         * 禁用单元格
+         * @param idx 单元格索引
+         */
+        disable: function (idx) {
+            this.disabled.push(idx);
+            //这里setTimeout 是为了实例化立刻返回实例，使事件能在初始化时就能侦听
+            setTimeout(this.proxy(function () {
+                this.fire('disable', idx, this);
+            }), 0);
+        },
+        /**
+         * 取消禁用单元格
+         * @param idx 单元格索引
+         */
+        enable: function (idx) {
+            this.disabled = $.grep(this.disabled, function (n) {
+                return n != idx;
+            });
+            this.fire('enable', idx, this);
+        },
+        /**
+         * 验证单元格是否可用
+         * @param cell
+         * @returns {boolean}
+         */
+        validate: function (cell) {
+            var disabled = this.disabled,
+                result = false,
+                index = this.cellToIndex(cell);
+            for (var i = 0, len = disabled.length; i < len; i++) {
+                if (disabled[i] == index) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        },
+        /**
+         * 演示触发离开事件，私有方法
+         * @param pos 离开方向
+         * @param cell 单元格
+         */
+        delayLeave: function (pos, cell) {
+            //解决多个panel切换事件bug
+            setTimeout(this.proxy(function () {
+                this.fire('leave', pos, cell, this._active, this);
+            }), 20);
+        },
+        leave: function (pos, index) {
+            var map = {
+                    'left': 'Left',
+                    'right': 'Right',
+                    'up': 'Up',
+                    'down': 'Down'
+                },
+                cell = this.indexToCell(index);
+            this.fire('leave', pos, cell, this._active, this);
+            this.fire('leave' + map[pos], cell, index, this._active, this);
+        },
+
+        _nextRight: function (cell) {
+            var r = cell[0], c = cell[1] + 1;
+            if (c > this.cols - 1) { // 超出边界
+                this.delayLeave('right', cell);
+                if (this.loop) {
+                    c = 0;
+                } else {
+                    return cell;
+                }
+            }
+            return  this.validate([r, c]) ? this._nextRight([r, c]) : [r, c];
+        },
+        _nextLeft: function (cell) {
+            var r = cell[0], c = cell[1] - 1;
+            if (c < 0) {
+                this.delayLeave('left', cell);
+                if (this.loop) {
+                    c = this.cols - 1;
+                } else {
+                    return cell;
+                }
+            }
+            return  this.validate([r, c]) ? this._nextLeft([r, c]) : [r, c];
+        },
+        _nextUp: function (cell) {
+            var r = cell[0] - 1, c = cell[1];
+            if (r < 0) {
+                this.delayLeave('up', cell);
+                if (this.loop) {
+                    r = this.rows - 1;
+                } else {
+                    return cell;
+                }
+            }
+            return  this.validate([r, c]) ? this._nextUp([r, c]) : [r, c];
+        },
+        _nextDown: function (cell) {
+            var r = cell[0] + 1, c = cell[1];
+            if (r > this.rows - 1) {
+                this.delayLeave('down', cell);
+                if (this.loop) {
+                    r = 0;
+                } else {
+                    return cell;
+                }
+            }
+            return  this.validate([r, c]) ? this._nextDown([r, c]) : [r, c];
+        },
+        /**
+         * 移动到下一个单元格
+         * @param cell 当前单元格
+         * @param direction 移动方向
+         */
+        next: function (cell, direction) {
+            if (!this.validate(cell)) {
+                var next, oldIndex, newIndex;
+                switch (direction) {
+                    case "left":
+                        next = this._nextLeft(cell);
+                        break;
+                    case "down":
+                        next = this._nextDown(cell);
+                        break;
+                    case "right":
+                        next = this._nextRight(cell);
+                        break;
+                    case "up":
+                        next = this._nextUp(cell);
+                        break;
+                }
+                newIndex = this.cellToIndex(next);
+
+                if ((this.focusIndex != newIndex) && !this.validate(next)) {
+                    oldIndex = this.cellToIndex(cell);
+                    this.blur(oldIndex, direction);
+                    this.focus(newIndex, direction);
+                }
+            }
+        },
+        /**
+         * 选择单元格
+         * @param index 单元格索引
+         */
+        select: function (index) {
+            var data = this.data,
+                dataItem = data[index];
+            if (dataItem) {
+                this.fire('select', index, dataItem, this);
+            }
+        },
+        /**
+         * 获取焦点
+         * @param idx 单元格索引
+         */
+        focus: function (idx) {
+            var data = this.data,
+                dataItem = data[idx];
+            this.focusIndex = idx;
+            if (dataItem) {
+                this.fire('focus', idx, dataItem, this);
+            }
+        },
+        /**
+         *  自动获取焦点
+         * @param type 可选，0：初始化时，1：向下翻页时，2：向上翻页时
+         *
+         */
+        autoFocus: function (type) {
+            this.blur();
+            switch (type) {
+                case 0:
+                    this.focus(this.options.focusIndex);
+                    break;
+                case 1:
+                    this.focus(0);
+                    break;
+                case 2:
+                    this.focus(this.data.length - 1);
+                    break;
+                default :
+                    this.focus(this.focusIndex);
+                    break;
+            }
+        },
+        /**
+         * 失去焦点
+         */
+        blur: function () {
+            var data = this.data,
+                idx = this.focusIndex,
+                dataItem = data[idx];
+            if (dataItem) {
+                this.blurIndex = idx;
+                this.fire('blur', this.blurIndex, dataItem, this);
+            }
+        },
+        events: function () {
+            //处理移动事件
+            this.registerEvent(Event.onMove(function (position) {
+                if (!this._active) return;
+                var cell = this.indexToCell(this.focusIndex);
+                this.next(cell, position);
+            }, this));
+
+            //处理确定键事件
+            this.registerEvent(Event.onOk(function () {
+                if (!this._active) return;
+                this.select(this.focusIndex);
+            }, this));
+
+            this.on('focus', function (index, obj) {
+                if (obj && obj.nodeType) {
+                    $(obj).addClass(this.options.focusClass);
+                    this.marquee(obj);
+                }
+            });
+
+            this.on('blur', function (index, obj) {
+                if (obj && obj.nodeType) {
+                    $(obj).removeClass(this.options.focusClass);
+                    this.unMarquee(obj);
+                }
+            });
+
+            this.on('select', function (index, obj) {
+                if (obj && obj.nodeType) {
+                    $(obj).addClass(this.options.selectClass);
+                }
+            });
+
+            this.on('leave', function (d, cell) {
+                this.blurIndex = this.leaveIndex = this.cellToIndex(cell);
+            });
+
+            this.on('active', function (panel, index) {
+                var obj = this.data[this.leaveIndex];
+                if (obj && obj.nodeType) {
+                    $(obj).removeClass(this.options.leaveClass);
+                }
+                this.blur();
+                index = index === undefined ? this.focusIndex : index;
+                this.focus(index);
+                this.leaveIndex = null;
+                this.pager && this.pager.active();
+            });
+
+            this.on('unActive', function () {
+                var obj = this.data[this.leaveIndex];
+                if (obj && obj.nodeType) {
+                    $(obj).addClass(this.options.leaveClass);
+                }
+                this.blur();
+                this.pager && this.pager.unActive();
+            });
+
+
+            if (this.pager) {
+                var self = this;
+                this.pager.on('change', function () {
+                    var _this = this;
+                    setTimeout(function () {
+                        _this.itemIndex = _this.pageSize * _this.pageIndex + self.focusIndex;
+                    }, 20);
+                });
+
+                this.pager.on('reset', function () {
+                    var _this = this;
+                    setTimeout(function () {
+                        _this.itemIndex = _this.pageSize * _this.pageIndex + self.focusIndex;
+                    }, 20);
+
+                });
+                if (this.pager.async) {
+
+                } else {
+                    var pager = this.pager;
+                    this.on('focus', function (i) {
+                        var pageIndex = Math.floor(i / pager.pageSize);
+                        if (pager.pageIndex != pageIndex) {
+                            pager.change(pageIndex);
+                        }
+                    });
+
+                    this.pager.on('next prev', function (pageIndex) {
+                        self.blur();
+                        self.focus(pageIndex * this.pageSize);
+                    });
+                }
+            }
+        },
+        marquee: function (el) {
+            var o = this.options,
+                selector = o.textSelector,
+                name = o.textAttrName,
+                chars = o.textChar;
+            if (chars > -1) {
+                var $el = selector ? $(el).find(selector) : $(el),
+                    text = $el.attr(name);
+                if (Util.getCharCount(text) > chars) {
+                    $el.html('<marquee>' + text + '</marquee>');
+                }
+            }
+        },
+        unMarquee: function (el) {
+            var o = this.options,
+                selector = o.textSelector,
+                name = o.textAttrName,
+                chars = o.textChar;
+
+            if (chars > -1) {
+                var $el = selector ? $(el).find(selector) : $(el),
+                    text = $el.attr(name);
+                if (Util.getCharCount(text) > chars) {
+                    $el.html(Util.subStr(text, chars));
+                }
+            }
+        }
+
+    }, Base);
+
+    TVUI.Panel = Panel;
+
+})(TVUI);
+;
+/**
+ * 分页模块
+ * v1.2.0
+ */
+(function (TVUI) {
+    var Pager,
+        $ = TVUI.$,
+        Class = TVUI.Class,
+        Event = TVUI.Event,
+        Key = TVUI.Key,
+        Base = TVUI.Base;
+    /**
+     * 分页类
+     * @type {*}
+     */
+    Pager = Class.create({
+        init: function (options) {
+            var o = this.options = $.extend({
+                total: 1,
+                //数据记录数
+
+                pageSize: 10,
+                //每页多少条
+
+                pageIndex: 0,
+                //初始显示第几页，从0开始计算
+
+                type: 0,
+                //分页方式，0：不自动分页，1：垂直方向自动分页，2：水平方向自动分页
+
+                async: false
+                //是否异步分页，同步分页是只通过设置html位移来试下分页，异步是动态创建html
+
+            }, options || {});
+            this.total = o.total;
+            this.pageSize = o.pageSize;
+            this.pageCount = Math.ceil(this.total / this.pageSize);
+            this.pageIndex = o.pageIndex;
+            this.type = o.type;
+            this.async = o.async;
+            this.itemIndex = this.pageSize * this.pageIndex;
+            this.events();
+            this.change(this.pageIndex, 0);
+        },
+        events: function () {
+            this.registerEvent(Event.onMove(function (d) {
+                if (!this._active) return;
+                if ((this.type === 1 && d == 'up') || (this.type === 2 && d == 'left')) {
+                    this.itemIndex = this.itemIndex > 0 ? --this.itemIndex : 0;
+                    this.move(this.itemIndex, 2);
+                } else if ((this.type === 1 && d == 'down') || (this.type === 2 && d == 'right')) {
+                    this.itemIndex = this.itemIndex < this.total - 1 ? ++this.itemIndex : this.total - 1;
+                    this.move(this.itemIndex, 1);
+                }
+            }, this));
+
+            this.registerEvent(Event.onPress(function (evt) {
+                if (!this._active) return;
+                switch (evt.which) {
+                    case Key.PAGE_DOWN:
+                        this.next();
+                        break;
+                    case Key.PAGE_UP:
+                        this.prev();
+                        break;
+                }
+            }, this));
+
+        },
+        /**
+         * 内部方法，不建议调用
+         * @param index
+         * @param type
+         */
+        move: function (index, type) {
+            var pageIndex = Math.floor(this.itemIndex / this.pageSize);
+            if (pageIndex != this.pageIndex) {
+                this.change(pageIndex, type);
+            }
+            this.itemIndex = index;
+            this.fire('move', this.itemIndex, this);
+        },
+        /**
+         * 重置分页，在记录数改变的时候，需要执行重置
+         * @param total 记录数
+         * @param pageSize  页面大小，可选
+         * @param pageIndex 现在第几页，可选
+         */
+        reset: function (total, pageSize, pageIndex) {
+            this.total = total;
+            this.pageSize = pageSize || this.pageSize;
+            this.pageCount = Math.ceil(this.total / this.pageSize);
+            this.pageIndex = pageIndex || this.pageIndex;
+            this.itemIndex = this.pageSize * this.pageIndex;
+            this.fire('reset', total, pageSize, pageIndex);
+        },
+
+        /**
+         * 翻页
+         * @param pageIndex 切换到第几页
+         * @param type 分页方式，可选， 0:初始化，1：向下翻，2：向上翻
+         */
+        change: function (pageIndex, type) {
+            if (pageIndex >= 0 && pageIndex < this.pageCount) {
+                this.pageIndex = pageIndex;
+            }
+            setTimeout(this.proxy(this.delayChange, type), 20);
+        },
+        /**
+         * 内部方法，不建议调用
+         * @param type
+         */
+        delayChange: function (type) {
+            this.fire('change', this.pageIndex, type, this);
+        },
+        /**
+         * 下一页
+         */
+        next: function () {
+            if (this.pageIndex < this.pageCount - 1) {
+                this.change(++this.pageIndex, 1);
+                this.fire('next', this.pageIndex, this);
+            }
+        },
+        /**
+         * 上一页
+         */
+        prev: function () {
+            if (this.pageIndex > 0) {
+                this.change(--this.pageIndex, 2);
+                this.fire('prev', this.pageIndex, this);
+            }
+        },
+        /**
+         * 第一页
+         */
+        first: function () {
+            this.change(0, 2);
+        },
+        /**
+         * 最后一页
+         */
+        last: function () {
+            this.change(this.pageCount - 1, 1);
+        }
+    }, Base);
+
+    TVUI.Pager = Pager;
+
+})(TVUI);
+;
+(function (TVUI) {
+    var ScrollBar,
+        $ = TVUI.$,
+        Key = TVUI.Key,
+        Class = TVUI.Class,
+        Base = TVUI.Base,
+        Event = TVUI.Event;
+
+
+    ScrollBar = Class.create({
+        init: function (options) {
+            var o = this.options = $.extend({
+                //可视区选择器或元素对象
+                view: null,
+
+                //滚动内容选择器或元素对象
+                content: null,
+
+                //滚动条轨道选择器或元素对象
+                track: null,
+
+                //滚动条柄选择器或元素对象
+                handle: 'span',
+
+                //Panel 实例
+                panel: null,
+
+                //内容每次滚动的距离，单位像素，没有panel时才有效
+                scrollLength: 100,
+
+                //自动按比例计算句柄高度
+                handleHeight: null
+
+            }, options || {});
+
+            /**
+             * panel实例
+             */
+            this.panel = o.panel;
+            /**
+             * 可视区对象
+             * @type {*|HTMLElement}
+             */
+            this.$view = $(o.view);
+            /**
+             * 内容对象
+             * @type {*|HTMLElement}
+             */
+            this.$content = $(o.content);
+            /**
+             * 滚动条轨道对象
+             * @type {*|HTMLElement}
+             */
+            this.$track = $(o.track);
+            /**
+             * 滚动条句柄对象
+             * @type {*|HTMLElement}
+             */
+            this.$handle = $(o.handle);
+            /**
+             * 当前滚动到第几步
+             * @type {number}
+             */
+            this.currentStep = 0;
+            this.reset();
+            this.events();
+        },
+        reset: function (contentHeight) {
+            /**
+             * 可视区高度
+             */
+            this.viewHeight = this.$view.height();
+
+            if (this.panel && this.panel.pager && this.panel.pager.async === true) {
+                /**
+                 * 内容区高度
+                 * @type {*|number}
+                 */
+                this.contentHeight = contentHeight || this.panel.pager.pageCount * this.viewHeight;
+            } else {
+                this.contentHeight = contentHeight || this.$content.height();
+            }
+            /**
+             * 内容需要滚动的长度
+             * @type {number}
+             */
+            this.scrollHeight = this.contentHeight - this.viewHeight;
+            this.scrollHeight > 0 ? this.show() : this.hide();
+
+            /**
+             * 滚动轨道的高度
+             */
+
+            this.trackHeight = this.trackHeight || this.$track.height();
+            /**
+             * 滚动句柄的高度
+             */
+            this.handleHeight = this.getHandleHeight(this.contentHeight);
+
+            this.$handle.height(this.handleHeight);
+            /**
+             * 总共需要滚动多少步
+             */
+            this.scrollSteps = this.getScrollSteps();
+            /**
+             * 内容区每一步滚动的距离
+             * @type {number}
+             */
+            this.perContent = this.scrollHeight / this.scrollSteps;
+            /**
+             * 滚动条需要滚动的距离
+             * @type {number}
+             */
+            this.scrollTrackHeight = this.trackHeight - this.handleHeight;
+            /**
+             * 滚动条每一步要滚滚东的距离
+             * @type {number}
+             */
+            this.perScroller = this.scrollTrackHeight / this.scrollSteps;
+
+            this.pageCount = Math.ceil(this.contentHeight / this.viewHeight);
+        },
+        /**
+         * 计算得到滚动句柄的高度
+         * @param contentHeight
+         * @returns {number}
+         */
+        getHandleHeight: function (contentHeight) {
+            return this.options.handleHeight || Math.max(this.trackHeight * (this.viewHeight / contentHeight), 10);
+        },
+        /**
+         * 计算需要滚动多少步
+         * @returns {*}
+         */
+        getScrollSteps: function () {
+            if (this.panel) {
+                if (this.panel.pager && this.panel.pager.async === true) {
+                    return this.panel.indexToCell(this.panel.pager.total - 1)[0];
+                } else {
+                    return this.panel.rows - 1;
+                }
+            } else {
+                return Math.ceil(this.scrollHeight / this.options.scrollLength);
+            }
+        },
+        /**
+         * 隐藏滚动条
+         */
+        hide: function () {
+            this.$track.hide();
+            this.fire('hide', this);
+        },
+        /**
+         * 显示滚动条
+         */
+        show: function () {
+            this.$track.show();
+            this.fire('show', this);
+        },
+        /**
+         * 执行滚动
+         * @param step
+         */
+        scroll: function (step) {
+            var content = this.perContent * step,
+                bar = this.perScroller * step;
+            bar = bar > this.scrollTrackHeight ? this.scrollTrackHeight : bar;
+            content = content > this.scrollHeight ? this.scrollHeight : content;
+            this.$handle.css('top', bar + 'px');
+            if (!this.panel) {
+                this.$content.css('top', -content + 'px');
+            }
+            this.currentStep = step;
+
+            this.fire('scroll', bar, content, step);
+        },
+        /**
+         * 向下滚
+         */
+        next: function () {
+            if (this.currentStep < this.scrollSteps) {
+                this.scroll(++this.currentStep);
+            }
+        },
+        /**
+         * 向上滚
+         */
+        prev: function () {
+            if (this.currentStep > 0) {
+                this.scroll(--this.currentStep);
+            }
+        },
+        events: function () {
+            if (this.panel) {
+                var self = this,
+                    pageRows = self.panel.indexToCell(this.panel.pager.pageSize - 1)[0] + 1;
+                this.panel.on('focus', function (i) {
+                    if (self.panel.pager && self.panel.pager.async === true) {
+                        var index = self.panel.pager.pageIndex * pageRows + self.panel.indexToCell(i)[0];
+                        self.scroll(index);
+                    } else {
+                        self.scroll(self.panel.indexToCell(i)[0]);
+                    }
+
+                });
+
+                this.panel.on('reset', function () {
+                    self.reset();
+                    if (self.panel.pager && self.panel.pager.async === false) {
+                        self.$content.css('top', -(self.viewHeight * self.panel.pager.pageIndex) + 'px');
+                    }
+                });
+
+                if (this.panel.pager && this.panel.pager.async === false) {
+                    this.panel.pager.on('change', function (pageIndex) {
+                        self.$content.css('top', -(self.viewHeight * pageIndex) + 'px');
+                    });
+                }
+
+            } else {
+                this.pageCount = Math.ceil(this.contentHeight / this.viewHeight);
+                this.pageSize = Math.ceil(this.viewHeight / this.options.scrollLength);
+                this.pageIndex = 0;
+                this.registerEvent(Event.onMove(function (d) {
+                    switch (d) {
+                        case 'up':
+                            this.prev();
+                            break;
+                        case 'down':
+                            this.next();
+                            break;
+                    }
+                }, this));
+                this.registerEvent(Event.onPress(function (evt) {
+                    switch (evt.which) {
+                        case Key.PAGE_DOWN:
+                            this.pageIndex < this.pageCount - 1 ? ++this.pageIndex : this.pageCount - 1;
+                            this.scroll(this.pageIndex * this.pageSize);
+                            break;
+                        case Key.PAGE_UP:
+                            this.pageIndex > 0 ? --this.pageIndex : 0;
+                            this.scroll(this.pageIndex * this.pageSize);
+                            break;
+                    }
+                }, this));
+
+            }
+
+        }
+
+
+    }, Base);
+
+    TVUI.ScrollBar = ScrollBar;
+
+})(TVUI);;
+/**
+ * 对话框组件
+ */
+(function (TVUI) {
+
+    var Dialog,
+        Class = TVUI.Class,
+        Base = TVUI.Base,
+        Util = TVUI.Util,
+        Panel = TVUI.Panel,
+        Lang = TVUI.Lang,
+        $ = TVUI.$;
+
+    Dialog = Class.create({
+        init: function (options) {
+            var o = this.options = $.extend({
+                //标题
+                title: '',
+                //对话框内容
+                content: '',
+                //宽度,
+                width: 300,
+                //高度，如不设置，即自动
+                height: null,
+                //自定义css className
+                theme: '',
+                // 格式 [{text:'确定',handler:function(){},theme:'ok'}]
+                btns: {},
+                //多少毫秒后自动关闭
+                timeout: null,
+                //页面实例
+                page: null,
+                //按钮获得焦点时的className
+                btnFocusClass: 'focus',
+                mask: true,
+                auto: true
+            }, options || {});
+            this.clientWidth = document.documentElement.clientWidth || document.body.clientWidth;
+            this.clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            this.btns = o.btns;
+            this.page = o.page;
+            this.render();
+            this.setPanel();
+            o.auto ? this.show() : this.hide();
+            if (o.timeout) {
+                Util.timeout(function () {
+                    this.destroy();
+                }, o.timeout, this);
+            }
+        },
+        render: function () {
+            var o = this.options,
+                html,
+                btnHtml = [],
+                template = '<div class="dialog-inner"><div class="dialog-title">{$title}</div>' +
+                    '<div class="dialog-content">{$content}</div>' +
+                    '<div class="dialog-btns">{$btns}</div></div>';
+
+            //按钮html模版
+            var btnTpl = '<div class="dialog-btn {$theme}"><span>{$name}</span></div>';
+            //生成按钮html
+            $.each(o.btns, function (i, n) {
+                btnHtml.push(Util.tpl(btnTpl, {
+                    name: n.text,
+                    theme: n.theme || ''
+                }));
+            });
+            //生成对话框html
+            html = Util.tpl(template, {
+                title: o.title,
+                content: o.content,
+                btns: btnHtml.join('')
+            });
+
+            if (o.mask) {
+                this.mask = $('<div>');
+                this.mask.attr('class', 'dialog-mask');
+                $(document.body).append(this.mask);
+            }
+
+            this.el = $('<div>').html(html).attr('class', ' dialog ' + o.theme);
+            //如果有传入高度
+            if (o.height) {
+                this.el.height(parseInt(o.height) + 'px');
+            }
+            $(document.body).append(this.el);
+
+            //计算left、top 自动居中
+            var left = (this.clientWidth - o.width) / 2,
+                top = (this.clientHeight - (o.height || this.el.height())) / 2;
+            this.el.css({
+                'left': left + 'px',
+                'top': top + 'px',
+                'position': 'absolute',
+                'width': parseInt(o.width) + 'px',
+                'z-index': ++Dialog.zIndex
+            });
+        },
+        setPanel: function () {
+            var $btns = this.el.find('.dialog-btn'),
+                self = this;
+            this.panel = new Panel({
+                cols: $btns.length,
+                data: $btns
+            });
+            this.panel.on('select', function (i) {
+                self.btns[i].handler && self.btns[i].handler(self);
+            });
+        },
+        show: function () {
+            this.page && this.page.unActive();
+            this.mask && this.mask.show();
+            this.el.show();
+            this.fire('show', this);
+        },
+        hide: function () {
+            this.page && this.page.active();
+            this.mask && this.mask.hide();
+            this.el.hide();
+            this.fire('hide', this);
+        },
+        destroy: function () {
+            this.parent.prototype.destroy.apply(this, arguments);
+            this.panel.destroy();
+            this.el.remove();
+            this.mask && this.mask.remove();
+            this.page && this.page.active();
+        }
+    }, Base);
+
+    Dialog.alert = function (page, content, callback, timeout) {
+        var d = new Dialog({
+            content: content,
+            title: Lang[page.lang].T_15,
+            width: 400,
+            btns: [
+                {text: Lang[page.lang].T_1, handler: function (obj) {
+                    callback && callback(obj);
+                    callback = null;
+                    obj.destroy();
+                }}
+            ],
+            theme: 'dialog-alert',
+            page: page,
+            timeout: timeout || null
+        });
+        d.on('destroy', function () {
+            callback && callback(d);
+        });
+        return d;
+    };
+
+    Dialog.confirm = function (page, content, okCallback, cancelCallback) {
+        return  new Dialog({
+            content: content,
+            title: '',
+            width: 400,
+            btns: [
+                {text: Lang[page.lang].T_1, handler: function (obj) {
+                    okCallback && okCallback(obj);
+                    obj.destroy();
+                }, theme: 'dialog-btn-ok'},
+                {text: Lang[page.lang].T_2, handler: function (obj) {
+                    cancelCallback && cancelCallback(obj);
+                    obj.destroy();
+                }, theme: 'dialog-btn-cancel'}
+            ],
+            theme: 'dialog-confirm',
+            page: page
+        });
+    };
+
+    Dialog.tip = function (content, timeout) {
+        return  new Dialog({
+            content: content,
+            title: '',
+            theme: 'dialog-tip',
+            timeout: timeout || 5000
+        });
+    };
+
+    Dialog.zIndex = 100;
+    TVUI.Dialog = Dialog;
+})(TVUI);
+;
+/**
+ * 播放器模块
+ * v1.2.0
+ *
+ */
+(function (TVUI) {
+    var Player,
+        Key = TVUI.Key,
+        Lang = TVUI.Lang,
+        Api = TVUI.API,
+        $ = TVUI.$,
+        Event = TVUI.Event,
+        Log = TVUI.Log,
+        Util = TVUI.Util;
+
+    Player = TVUI.Class.create({
+        init: function (options) {
+            var o = this.options = $.extend({
+                //播放内容类型 Video 或 Audio
+                type: 'video',
+
+                //是否全屏
+                fullScreen: false,
+
+                //视频宽度
+                width: 400,
+
+                //视频高度
+                height: 300,
+
+                //位置左
+                left: 0,
+
+                //位置右
+                top: 0,
+
+                //页面实例
+                page: null,
+
+                //是否设置body透明
+                transparent: true,
+
+                //数值型，取1表示将画面保持在暂停前最后一帧，取0表示将画面设为黑场
+                pauseMode: 1,
+                //是否在页面unload时自动销毁播放器
+                autoDestroy: true
+            }, options || {});
+
+
+            /**
+             * 播放速度倍数
+             * @type {number}
+             */
+            this.pace = 1;
+            /**
+             * 播放内容类型
+             */
+            this.type = o.type;
+            /**
+             * 页面实例
+             */
+            this.page = o.page;
+            /**
+             * 音量缓存key
+             * @type {string}
+             * @private
+             */
+                //已经不再使用
+                // this._volumnCacheKey = 'sw_volumn';
+                //计数器，用来判断服务是否可用
+            this._disableCount = 0;
+            /**
+             * 蛋清播放文件的索引，只对http方式有效
+             * @type {number}
+             */
+            this.playingIndex = 0;
+            /**
+             * 播放状态，是否正在播放中
+             * @type {boolean}
+             */
+            this.isPlaying = false;
+            /**
+             * 播放文件列表
+             * @type {Array}
+             */
+            this.fileList = [];
+            /**
+             * 暂停方式 取1表示将画面保持在暂停前最后一帧，取0表示将画面设为黑场
+             * @type {number|player.pauseMode|b.options.pauseMode|Player.options.pauseMode|b.pauseMode|Player.pauseMode}
+             */
+            this.pauseMode = o.pauseMode;
+            /**
+             * 当前的音量值
+             */
+            this._volumn = this._initVolumn();
+
+            //适配页面效果，在机顶盒上是无效
+            this._createDom(o.fullScreen, o.left, o.top, o.width, o.height);
+            this.createPlayer();
+            this._event();
+        },
+        _initVolumn: function () {
+            var cache = Api.DataAccess.info("VodApp", "QAMName4");
+            //var cache = Api.SysSetting.env(this._volumnCacheKey);
+            if (cache) {
+                Api.DataAccess.volume(cache);
+            } else {
+                cache = Api.DataAccess.volume(16);
+                Api.DataAccess.info("VodApp", "QAMName4", cache);
+                //Api.SysSetting.env(this._volumnCacheKey, cache);
+            }
+            this.fire('initVolume', cache);
+            return parseInt(cache, 10);
+        },
+        _createDom: function (fullScreen, x, y, w, h) {
+            var div = $('<div>');
+            if (fullScreen) {
+                w = document.documentElement.clientWidth || document.body.clientWidth;
+                h = document.documentElement.clientHeight || document.body.clientHeight;
+                x = y = 0;
+            }
+            div.css({
+                'position': 'absolute',
+                'width': w + 'px',
+                'height': h + 'px',
+                'top': y + 'px',
+                'left': x + 'px',
+                'color': '#fff'
+            });
+            this.el = div;
+            if (this.options.transparent) {
+                $(document.body).append(div).css({'background': 'transparent'});
+            } else {
+                $(document.body).append(div);
+            }
+        },
+        _event: function () {
+            var self = this;
+            //销毁
+            if (this.page) {
+                if (this.options.autoDestroy) {
+                    this.page.on('unload', this.proxy(this.destroy));
+                }
+
+                this.page.on('active unActive', function () {
+                    self._active = this._active;
+                });
+            }
+
+            this.registerEvent(Event.onPress(function (evt) {
+                if (!self._active) return;
+                switch (parseInt(evt.which)) {
+                    case Key.STOP: //停止
+                        self.stop();
+                        break;
+                    case Key.PAUSE: //暂停
+                        self.pause();
+                        break;
+                    case Key.PLAY:  //播放
+                        self.play();
+                        break;
+                    case Key.VOLUME_MUTE:  //静音
+                        self.mute();
+                        break;
+                    case Key.FUN9:  //快退
+                        self.fastBackward();
+                        break;
+                    case Key.FUN10: //快进
+                        self.fastForward();
+                        break;
+                    case Key.FUN20:    //视频画面格式切换
+                        var aspect = self.aspect();
+                        //6 是自动;
+                        if (aspect == 6) {
+                            aspect = 0;
+                        }
+                        aspect = aspect > 6 ? 0 : ++aspect;
+                        self.aspect(aspect);
+                        break;
+                }
+            }));
+            //音量+
+            this.registerEvent(Event.onKey(Key.VOLUME_UP, function () {
+                if (!self._active) return;
+                self.volume(1);
+            }));
+            //音量-
+            this.registerEvent(Event.onKey(Key.VOLUME_DOWN, function () {
+                if (!self._active) return;
+                self.volume(-1);
+            }));
+            //系统事件
+            this.registerEvent(Event.onSystem(function (e) {
+                if (!self._active) return;
+
+                var which = parseInt(e.which, 10),
+                    ext = e.modifiers,
+                    page = self.page,
+                //根据Id指针，取出内存中保存的消息属性的字符串内容
+                    eventExtArr = Api.SysSetting.getEventInfo(ext).split(","),
+                    code = Math.floor(eventExtArr[1]);
+                //log(which, ext, eventExtArr);
+                switch (which) {
+                    case 10031: //成功锁定频点
+                        var ts = DVB.currentTS; //获取当前频点的传输流对象
+                        self.fire('locked', ts);
+                        break;
+                    case 10032: //锁频失败
+                        self.fire('error', Lang[page.lang].T_7, which);
+                        break;
+                    case 10901: //当前媒体已播放到末尾（仅用于本地媒体播放）
+                        self.fire('playEnd');
+                        self.playNext();
+                        break;
+                    case 10905: //收到Session Manager的NGOD-S1 Announce请求
+                        break;
+                    case 10921: //根据NGOD-S1 Session Setup响应的destination字段信息，在对应频点的PAT表中无法找到对应节目的PMT描述
+                        self.fire('error', Lang[page.lang].T_8, which);
+                        break;
+                    case 10903: //收到Session Manager返回的NGOD-S1 Session Set up响应
+                        switch (code) {
+                            case 754:
+                                //不可用媒资
+                                self.fire('error', Lang[page.lang].T_9, which, code);
+                                break;
+                            default:
+                                //网络繁忙
+                                if(code != 200){
+                                    self.fire('error', Lang[page.lang].T_10, which, code);
+                                }
+                                break;
+                        }
+                        break;
+                    case 10913: //发出NGOD-S1 Session Teardown请求后已过10秒，尚未收到session manager的响应
+                        self._disableCount++;
+                        break;
+                    case 10906: //收到Session Manager返回的NGOD-S1 Ping响应
+                        self._disableCount = 0;
+                        break;
+                    case 10907: //收到推流服务器返回的NGOD-C1 Play响应
+                    case 10908: //收到推流服务器返回的NGOD-C1 Pause响应
+                        switch (code) {
+                            case 200:
+                                if (which == 10907) {
+                                    //设置播放点,等待setPoint状态
+                                    //todo:这里可能要做处理
+                                }
+                                break;
+                            case 403:
+                                //无权限操作
+                                self.fire('error', Lang[page.lang].T_11, which, code);
+                                break;
+                            case 754:
+                                //不可用媒资
+                                self.fire('error', Lang[page.lang].T_9, which, code);
+                                break;
+                            default:
+                                if (code >= 400 && code <= 778 && code != 455) {
+                                    //网络繁忙
+                                    self.fire('error', Lang[page.lang].T_10, which, code);
+                                }
+                                break;
+                        }
+                        break;
+                    case 10910: //收到推流服务器返回的NGOD-C1 Get Parameter响应
+                        self._disableCount = 0;
+                        break;
+                    case 10909: //收到推流服务器的NGOD- C1 Announce请求
+                        switch (code) {
+                            case 403:
+                                //无权限操作
+                                self.fire('error', Lang[page.lang].T_11, which, code);
+                                break;
+                            case 2101: //rtsp 流结束
+                                self.fire('rtspEnd', which, code);
+                                break;
+                            case 2104: //rtsp 流开始
+                                self.fire('rtspStart', which, code);
+                                break;
+                            case 5402:
+                                //推流会话中断
+                                self.fire('error', Lang[page.lang].T_12, which, code);
+                                break;
+                        }
+                        break;
+                    case 10915: //发出NGOD-C1 Play请求后已过10秒，尚未收到推流服务器的响应
+                        self._disableCount++;
+                        break;
+                    case 10912: //发出NGOD-S1 Session Setup请求后已过10秒，尚未收到session manager的响应
+                        //点播失败,是否重新点播
+                        self.fire('error', Lang[page.lang].T_13, which);
+                        break;
+                    case 10904: //收到Session Manager返回的NGOD-S1 Session Teardown响应
+                        if (code != 200) {
+                            //点播会话中断
+                            self.fire('error', Lang[page.lang].T_14, which, code);
+                        }
+                        break;
+                    case 10914: //发出NGOD-S1 Ping请求后已过10秒，尚未收到session manager的响应
+                        self._disableCount++;
+                        if (self._disableCount > 20) {
+                            self.fire('error', Lang[page.lang].T_14, which);
+                        }
+                        break;
+                    case 10917: //发出NGOD-C1 Get Parameter请求后已过10秒，尚未收到推流服务器的响应
+                        self._disableCount++;
+                        if (self._disableCount > 20) {
+                            self.fire('error', Lang[page.lang].T_14, which);
+                        }
+                        break;
+                    case 11702:
+                        //隐藏不能播放节目的提示
+                        // self.trigger('error', '不能播放节目', which);
+                        break;
+                    default:
+                        //永新世博CA
+                        if (which >= 11301 && which <= 11328) {
+                            self.fire('error', eventExtArr[0], which);
+                        }
+                        //数码视讯CA
+                        if (which >= 11501 && which <= 11585) {
+                            self.fire('error', eventExtArr[0], which);
+                        }
+                        break;
+
+                }
+
+            }));
+
+        },
+        setPosition: function (fullScreen, x, y, w, h) {
+            if (this.type == 'video') {
+                var position = [];
+                position.push(Number(fullScreen));
+                position.push(x);
+                position.push(y);
+                position.push(w);
+                position.push(h);
+                this.player.position = position.join(',');
+            } else {
+                this.player.position = '0,0,0,1,1';
+            }
+        },
+        /**
+         * 创建播放器
+         */
+        createPlayer: function () {
+            var o = this.options;
+            if (window.MediaPlayer) {
+                this.player = new MediaPlayer();
+                this.instanceId = Api.SysSetting.env('sw_player_id');
+                if (this.instanceId) {
+                    this.player.bindPlayerInstance(parseInt(this.instanceId));
+                } else {
+                    this.instanceId = this.player.createPlayerInstance(o.type, o.type == 'video' ? 2 : 0);
+                    Api.SysSetting.env('sw_player_id', String(this.instanceId));
+                }
+                this.setPosition(o.fullScreen, o.left, o.top, o.width, o.height);
+            } else {
+                //这里做浏览器提示，方便调试
+                var fn = 'isDVBVideo|setPace|setPosition|DVBSrc|VODSrc|UDPSrc|src|play|pause|refresh|destroy|stop|mute|getLength|point|aspect|mode|fastForward|slowForward|fastBackward|slowBackward|volumnUp|volumnDown|active|multiSrc|next'.split('|');
+                var self = this;
+                $.each(fn, function (i, n) {
+                    self[n] = function () {
+                        var arr = Util.makeArray(arguments);
+                        arr.unshift('player.' + n + '(');
+                        arr.push(')');
+                        Util.log.apply(Util, arr);
+                        self.el.html(arr.join(''));
+                        return true;
+                    };
+                });
+                this.el.css({'background': '#000'});
+            }
+        },
+        /**
+         * 销毁播放器
+         * @returns {*}
+         */
+        destroy: function (mode) {
+            this.parent.prototype.destroy.apply(this, arguments);
+            //this.player.pause($.type(mode) == 'number' ? mode : this.pauseMode);
+            Api.SysSetting.env('sw_player_id', null);
+            //销毁播放器默认设置为黑场模式
+            Api.DataAccess.info("MediaSetting", "PauseMode", $.type(mode) == 'number' ? mode : this.pauseMode);
+            //销毁播放器
+            return this.player.releasePlayerInstance();
+        },
+        /**
+         * 设置播放资源，支持 file http delivery rtsp udp 方式
+         * @param file
+         */
+        src: function (file) {
+            var re = /(file:\/\/|http:\/\/|delivery:\/\/|rtsp:\/\/|udp:\/\/)/i;
+            if (re.test(file)) {
+                this.fileList = [];
+                this.fileList.push(file);
+                //由于this.palyer.source是不能读的，会导致死机，play方法已经注释了读取，这里需要标识播放状态才能更换直播频道
+                this.isPlaying = false;
+            } else {
+                throw new Error('文件地址不正确');
+            }
+        },
+        /**
+         * 设置多个播放资源，只对http方式
+         * @param files
+         */
+        multiSrc: function (files) {
+            this.fileList = files;
+        },
+        /**
+         * 设置DVB播放资源
+         * @param options
+         * @constructor
+         */
+        DVBSrc: function (options) {
+            // delivery://Frequency.SymbolRate.Modulation.ProgramNumber.VideoPID.AudioPID
+            var defaultValue = {
+                //频点频率，单位KHz
+                Frequency: '',
+                //符号率，单位KSymbol/s，可填0，系统取默认值为6875
+                SymbolRate: 0,
+                //Modulation为调制方式，可填0，系统取默认值64QAM
+                Modulation: 0,
+                //业务ID号
+                ProgramNumber: '',
+                //视频PID，可填0，系统默认取该业务下PID值最小的视频流，如果该业务为纯音频业务，该值为0
+                VideoPID: 0,
+                //音频PID，可填0，系统默认取该业务下PID值最小的音频流
+                AudioPID: 0
+            };
+            var o = $.extend(defaultValue, options),
+                src = [];
+            if (!o.Frequency || !o.ProgramNumber) {
+                throw new Error('缺少参数');
+            }
+            src.push(o.Frequency);
+            src.push(o.SymbolRate);
+            src.push(o.Modulation);
+            src.push(o.ProgramNumber);
+            src.push(o.VideoPID);
+            src.push(o.AudioPID);
+            var source = 'delivery://' + src.join('.');
+            this.src(source);
+        },
+        /**
+         * 设置VOD播放资源
+         * @param options
+         * @constructor
+         */
+        VODSrc: function (options) {
+            // rtsp://<session-manager-path>:<session-manager-port>/;purchaseToken=<purchase-token>;serverId=<server-id>
+            var defaultValue = {
+                //前端session manager服务器的IP地址或者域名
+                path: '',
+                //前端session manager服务器的通讯端口
+                port: '',
+                //购买令牌，由鉴权结果返回
+                token: '',
+                //前端Navigation Server服务器的IP地址
+                serverId: ''
+            };
+            var o = $.extend(defaultValue, options);
+            if (!o.path || !o.port || !o.token || !o.serverId) {
+                throw new Error('缺少参数');
+            }
+            var source = 'rtsp://' + o.path + ':' + o.port + '/;purchaseToken=' + o.token + ';serverId=' + o.serverId;
+            this.src(source);
+        },
+        /**
+         * 设置UDP播放资源
+         * @param options
+         * @constructor
+         */
+        UDPSrc: function (options) {
+            //udp://MulticastAddress:UDPPort:ProgramNumber:VideoPID:AudioPID
+            var defaultValue = {
+                //MulticastAddress为发送组播地址,当前端使用UDP单播时，MulticastAddress为“0.0.0.0”，当前端使用UDP组播时，MulticastAddress为发送组播地址
+                address: '0.0.0.0',
+                //UDP端口号
+                port: '',
+                //业务ID号
+                ProgramNumber: '',
+                //视频PID，可填0，系统默认取该业务下PID值最小的视频流，如果该业务为纯音频业务，该值为0
+                VideoPID: 0,
+                //音频PID，可填0，系统默认取该业务下PID值最小的音频流
+                AudioPID: 0
+            };
+            var o = $.extend(defaultValue, options),
+                src = [];
+            if (!o.ProgramNumber) {
+                throw new Error('缺少参数');
+            }
+            src.push(o.address);
+            src.push(o.port);
+            src.push(o.ProgramNumber);
+            src.push(o.VideoPID);
+            src.push(o.AudioPID);
+            var source = 'udp://' + src.join(':');
+            this.src(source);
+        },
+        /**
+         * 开始播放资源
+         */
+        play: function () {
+            //已经在播放，即刷新,
+            if (this.isPlaying) {
+                this.pace = 1;
+                this.player.pace = this.pace;
+
+                var src = this.fileList[this.playingIndex];
+                //避免相同的资源刷新后重头开始播放
+                //if (this.player.source != src) {
+                //    this.player.source = src;
+                //}
+                this.player.refresh();
+                this.fire('play', 1/*, this.player.source*/);//同洲机顶盒1.0版本中间件，读取player.source値，会造成机顶盒死机
+            } else {
+                this.player.source = this.fileList[this.playingIndex];
+                this.isPlaying = true;
+                this.pace = 1;
+                this.player.pace = this.pace;//快进快退状态重新播放一个视频，默认恢复为1
+                var ret = this.player.play();
+                //播放时设置的position没有更新，不知道是不是播放器的bug， 暂时用刷新来解决(只有http方式才有这个问题)
+                // setTimeout(this.proxy(function () {
+                //this.player.pause();
+                //this.player.play();
+                //  }), 10);
+                this.fire('play', ret/*, this.player.source*/);
+            }
+        },
+        /**
+         * 播放下一个资源
+         */
+        playNext: function () {
+            var count = this.fileList.length,
+                index = this.playingIndex;
+            // log('playNext', count, count);
+            //如果还有未播放文件，继续播放下一个
+            if (index < count - 1) {
+                ++this.playingIndex;
+                this.stop();
+                this.play();
+            } else {
+                //没有播放文件
+                this.fire('allEnd', this.player);
+            }
+        },
+        /**
+         * 暂停
+         * @returns {*}
+         */
+        pause: function (mode) {
+            this.fire('pause');
+            return this.player.pause(typeof mode === 'undefined' ? this.pauseMode : mode);
+        },
+        /**
+         * 停止
+         * @returns {*}
+         */
+        stop: function (mode) {
+            this.isPlaying = false;
+            this.fire('stop');
+            return this.player.pause(typeof mode === 'undefined' ? this.pauseMode : mode);
+        },
+        /**
+         * 设置音量
+         * @param val 0 - 32
+         */
+        volume: function (val) {
+            switch (val) {
+                case 1:
+                    this._volumn = this._volumn >= 32 ? 32 : ++this._volumn;
+                    break;
+                case -1:
+                    this._volumn = this._volumn <= 0 ? 0 : --this._volumn;
+                    break;
+                default :
+                    this._volumn = val;
+                    break;
+            }
+            Api.DataAccess.volumn(this._volumn);
+            //Api.SysSetting.env(this._volumnCacheKey, this._volumn);
+            this.fire('volume', this._volumn);
+        },
+
+        /**
+         * 静音设置
+         */
+        mute: function () {
+            var isMute = !!this.player.getMute();
+            if (!isMute) {
+                this.player.audioMute();
+            } else {
+                this.player.audioUnmute();
+            }
+            this.fire('mute', !isMute);
+        },
+        /**
+         * 获取影片的长度
+         * @param flag 是否转换成秒
+         * @returns {*}
+         */
+        getLength: function (flag) {
+            var timeStr = this.player.getMediaDuration(),
+                timeArray = timeStr.split(':');
+            //当Source属性为本地媒体文件时，该方法返回正播放媒体的总时长；当Source属性为DVB广播频道、NGOD-VOD、IP-UDP码流时，该方法返回“0”。
+            //是否转换成秒
+            if (flag) {
+                if (timeArray.length == 3) {
+                    //时间换算成秒
+                    return parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]);
+                } else {
+                    return 0;
+                }
+            } else {
+                //数字不够两位补零
+                var newArray = $.map(timeArray, function (n) {
+                    return Util.pad(n, 2);
+                });
+                return newArray.join(':');
+            }
+        },
+        /**
+         * 获取播放的时间，返回时间格式
+         * @returns {string|*}
+         */
+        getPlayTime: function () {
+            var total = this.point(),
+                hours = parseInt(total / 3600),
+                minute = parseInt((total - hours * 3600) / 60),
+                second = total - hours * 3600 - minute * 60,
+                array = [hours, minute, second];
+            var newArray = $.map(array, function (n) {
+                return Util.pad(n, 2);
+            });
+            return newArray.join(':');
+        },
+        /**
+         * 获取或设置影片播放事件，单位是秒
+         * @param second
+         * @returns {*}
+         */
+        point: function (second) {
+            if (second !== undefined && $.type(parseInt(second)) == 'number') {
+                //设置媒体的播放点,数值型，只读，单位为秒
+                this.player.point = second;
+            } else {
+                return this.player.currentPoint;
+            }
+        },
+        /**
+         * 刷新
+         */
+        refresh: function () {
+            this.player.refresh();
+        },
+        /**
+         *  切换视频画面格式，1为16:9，2为4:3 combined播放模式，3为4:3 Pan-Scan 播放模式，4为4:3 Letter-Box 播放模式，5为全屏模式，6为Auto，默认值为Auto。
+         * @param mode
+         * @returns {*|MediaPlayer.videoAspect|number|Player.player.videoAspect}
+         */
+        aspect: function (mode) {
+            //功能：视频画面格式，1为16:9，2为4:3 combined播放模式，3为4:3 Pan-Scan 播放模式，4为4:3 Letter-Box 播放模式，5为全屏模式，6为Auto，默认值为Auto。
+            if (mode) {
+                this.player.videoAspect = mode;
+                this.fire('aspect', mode);
+            } else {
+                return this.player.videoAspect;
+            }
+        },
+        /**
+         * 切换视频制式，只接受以下的输入值：1为PAL，2为NTSC，3为SECAM，4为Auto，默认值为4
+         * @param mode
+         * @returns {*|Player.player.videoMode}
+         */
+        mode: function (mode) {
+            //视频制式，只接受以下的输入值：1为PAL，2为NTSC，3为SECAM，4为Auto，默认值为4
+            if (mode) {
+                this.player.videoMode = mode;
+            } else {
+                return this.player.videoMode;
+            }
+        },
+        /**
+         * 设置播放速度
+         * @param pace 倍数，1、2、4、8、16、32、-1、-2、-4、-8、-16、-32
+         */
+        setPace: function (pace) {
+            this.player.pace = this.pace = pace;
+            this.refresh();
+            if (pace > 1) {
+                this.fire('fastForward', this.pace);
+            } else if (pace < -1) {
+                this.fire('fastBackward', this.pace);
+            }
+            this.fire('pace', this.pace);
+        },
+        /**
+         * 快进
+         */
+        fastForward: function () {
+            if (this.pace == 1) {
+                this.pace = 12;
+            } else if (this.pace == 12) {
+                this.pace = 32;
+            } else if (this.pace == 32) {
+                this.pace = 1;
+            }else{
+                this.pace = 12;
+            }
+            /*
+             if (this.pace < 1) {
+             this.pace = 1;
+             } else {
+             this.pace *= 2;
+             if (this.pace > 32) {
+             this.pace = 1;
+             }
+             }
+             */
+            this.player.pace = this.pace;
+            this.refresh();
+            this.fire('fastForward', this.pace);
+        },
+        /**
+         * 快退
+         */
+        fastBackward: function () {
+            if (this.pace == 1) {
+                this.pace = -12;
+            } else if (this.pace == -12) {
+                this.pace = -32;
+            } else if (this.pace == -32) {
+                this.pace = 1;
+            }else{
+                this.pace = -12;
+            }
+            /*
+             if (this.pace >= 0) {
+             this.pace = -1;
+             } else if (this.pace < 0) {
+             this.pace *= 2;
+             if (this.pace < -32) {
+             this.pace = 1;
+             }
+             }
+             */
+            this.player.pace = this.pace;
+            this.refresh();
+            this.fire('fastBackward', this.pace);
+        },
+        /**
+         * 判断当前播放的视频是否 视频流
+         * @returns {boolean}
+         */
+        isDVBVideo: function () {
+            // 视频信号：[2,4]、[4,27]; 音频：[4]
+            var eleStreams = this.player.eleStreams || [];
+            if (eleStreams.length == 1 && eleStreams[0].eleStreamType == 4) {
+                return false;
+            } else {
+                for (var i = 0, len = eleStreams.length; i < len; i++) {
+                    if (eleStreams[i].eleStreamType == 2 || eleStreams[i].eleStreamType == 4) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }, TVUI.Base);
+
+    TVUI.Player = Player;
+
+})(TVUI);
+;
+/**
+ * 延时加载图片组件
+ */
+(function ($, TVUI) {
+
+    var LazyLoad = TVUI.Class.create({
+        init: function (options) {
+            var o = this.options = $.extend({
+                //可视区选择器
+                view: document.body,
+
+                //内容区选择器
+                el: document.body,
+
+                //占位图片
+                placeholder: 'theme/common/img/space.gif',
+
+                //加载图片阀值，即图片在距离可视区多少像素时开始加载
+                threshold: 100,
+
+                //是否替换content中的图片src值
+                replaceSrc: false,
+
+                //是否异步加载content
+                async: false,
+
+                //内容html
+                content: '',
+
+                //滚动条实例
+                scrollBar: null
+            }, options || {});
+
+            /**
+             * 内容区对象
+             * @type {*|HTMLElement}
+             */
+            this.el = $(o.el);
+            /**
+             * 可视区对象
+             * @type {*|HTMLElement}
+             */
+            this.view = $(o.view);
+            /**
+             * 占位图片
+             */
+            this.placeholder = o.placeholder;
+            /**
+             * 阀值
+             * @type {number|lazyload.threshold|jt.threshold|touch.threshold}
+             */
+            this.threshold = o.threshold;
+            /**
+             * 内容
+             */
+            this.content = o.content;
+            this.async = o.async;
+            this.replaceSrc = o.replaceSrc;
+            this.scrollBar = o.scrollBar;
+
+            /**
+             * 可视区的位置
+             */
+            this.parentOffset = this.view.offset();
+            this.render();
+            this.imgs = this.el.find('img');
+            this.events();
+            this.load();
+        },
+        render: function () {
+            //如果是异步加载内容
+            if (this.content && this.async) {
+
+                //需要替换src的原始值
+                if (this.replaceSrc) {
+                    var r1 = /<img [^>]*src=['"]([^'"]+)[^>]*>/gi,
+                        r2 = /src=['"]([^'"]+)['"]/gi,
+                        placeholder = this.placeholder;
+
+                    this.content = this.content.replace(r1, function (img) {
+                        return img.replace(r2, function (src) {
+                            return 'data-' + src + ' src="' + placeholder + '"';
+                        });
+                    });
+                }
+                this.el.html(this.content);
+            }
+        },
+        events: function () {
+            var self = this;
+            if (this.scrollBar) {
+                this.scrollBar.on('scroll', function () {
+                    self.load();
+                });
+
+                this.imgs.each(function (i, img) {
+                    //图片加载完成时要重置滚动条
+                    img.onload = function () {
+                        self.scrollBar.reset();
+                    };
+                });
+            }
+        },
+        load: function () {
+            var self = this,
+                parent = this.parentOffset,
+                view = parent.top + parent.height;
+
+            this.imgs.each(function (i, img) {
+                //已经加载完成的图片不需要再加载
+                if (img.className.indexOf('J_load') === -1) {
+                    var $img = $(img),
+                        offset = $img.offset(),
+                        src = $img.attr('data-src');
+                    if (offset.top - self.threshold < view) {
+                        $img.attr('src', src).addClass('J_load');
+                    }
+                }
+            });
+        }
+
+
+    }, TVUI.Base);
+
+
+    TVUI.LazyLoad = LazyLoad;
+})(Zepto, TVUI);;
+(function (TVUI) {
+    var util = TVUI.Util,
+        Event = TVUI.Event,
+        $ = TVUI.$,
+        isShow = false,
+        box,
+        log = function () {
+            var args = util.makeArray(arguments);
+            var msg = [];
+            $.each(args, function (i, n) {
+                if (typeof n == 'object') {
+                    try {
+                        msg.push(JSON.stringify(n));
+                    } catch (e) {
+                        msg.push(n);
+                    }
+                } else {
+                    msg.push(n);
+                }
+            });
+            var div = $('<div>').css({
+                "border-bottom": "1px dashed #666",
+                "padding": "10px"
+            });
+            isShow = true;
+            div.html(msg.join(" | "));
+            if(box) {
+                box.show();
+                box.append(div);
+            }
+            util.log.apply(util, arguments);
+        };
+
+    //星号键
+    Event.onKey(318, function () {
+        if(TVUI.debug) {
+            isShow = !isShow;
+            if (isShow) {
+                box.show();
+            } else {
+                box.hide();
+            }
+        }
+    });
+
+    //信息键，清空log
+    Event.onKey(73, function () {
+        TVUI.debug && box.empty();
+    });
+
+    window.onerror = function () {
+        //log.apply(log, arguments);
+        // return true;
+    };
+    TVUI.Log = log;
+
+    $(function(){
+        if(TVUI.debug) {
+            box = $('#debugbox');
+            if (box.length === 0) {
+                box = $('<div>').attr('id', 'debugbox');
+                box.css({
+                    "position": "absolute",
+                    "z-index": "9999",
+                    "width": "90%",
+                    "height": "90%",
+                    "background": "#fff",
+                    "color": "#000",
+                    "left": "50px",
+                    "top": "20px",
+                    "border": "5px solid red",
+                    "font-size": "18px",
+                    "word-break": "break-all",
+                    "display": "none"
+                });
+                $('body').append(box);
+            }
+        }
+    });
+
+})(TVUI);
+
+
+

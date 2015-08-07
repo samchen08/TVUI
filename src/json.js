@@ -10,7 +10,7 @@ if (!this.JSON) {
     }
 
     if (typeof Date.prototype.toJSON !== 'function') {
-        Date.prototype.toJSON = function (key) {
+        Date.prototype.toJSON = function () {
             return this.getUTCFullYear() + '-' +
                 f(this.getUTCMonth() + 1) + '-' +
                 f(this.getUTCDate()) + 'T' +
